@@ -53,7 +53,7 @@ public class AuthenticationRestController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails, device);
         Map result = new HashMap();
-        result.put("token", token);
+        result.put("gamu", token);
         return ResponseEntity.ok(result);
     }
 
