@@ -12,6 +12,7 @@ import se331.lab.rest.repository.OrganizerRepository;
 import se331.lab.rest.security.entity.Authority;
 import se331.lab.rest.security.entity.AuthorityName;
 import se331.lab.rest.security.entity.User;
+import se331.lab.rest.security.repository.AuthorityRepository;
 import se331.lab.rest.security.repository.UserRepository;
 import se331.lab.rest.service.UserService;
 import se331.lab.rest.util.LabMapper;
@@ -25,18 +26,18 @@ public class UserController {
     UserRepository userRepository;
     @Autowired
     OrganizerRepository organizerRepository;
+    @Autowired
+    AuthorityRepository authorityRepository;
     PasswordEncoder encoder = new BCryptPasswordEncoder();
-    List<Authority> userAuth = new ArrayList<>();
-    Authority authority = new Authority();
     @PostMapping("/signup")
     public ResponseEntity<?> saveUser(@RequestBody User user){
-        authority.setName(AuthorityName.ROLE_USER);
-        userAuth.add(authority);
+        Authority authUser = authorityRepository.getById(1L);
         Organizer organizer =organizerRepository.save(Organizer.builder().name(user.getUsername()).id(Long.parseLong(String.valueOf(organizerRepository.findAll().size()+1))).build());
         organizer.setUser(user);
         String password = encoder.encode(user.getPassword());
         user.setPassword(password);
         user.setEnabled(true);
+        user.getAuthorities().add(authUser);
 //        user.getAuthorities().add(authority);
         user.setOrganizer(organizer);
 //       User newUser = User.builder().username(user.getUsername()).email(user.getEmail()).password(user.getPassword())
